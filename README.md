@@ -1,5 +1,7 @@
 # Redux Playground
 
+![Redux Playground: one todo app, four state layers](docs/design/social-preview.png)
+
 One todo app, four implementations of its state layer, side by side:
 
 - **Redux + HTML**: Redux with plain TypeScript and the DOM, no framework
@@ -8,7 +10,5 @@ One todo app, four implementations of its state layer, side by side:
 - **Custom Redux**: a from-scratch implementation of `createStore`, middleware and the React bindings
 
 Every version shares the same UI and passes the same component tests.
-
-![Todo app in light mode](docs/design/light-default.png)
 
 See the [design](docs/design/README.md) for every screen in light and dark mode, and the design system.
