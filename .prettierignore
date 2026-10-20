@@ -1,0 +1,5 @@
+package-lock.json
+dist
+coverage
+docs/design/*.png
+docs/design/*.penpot
