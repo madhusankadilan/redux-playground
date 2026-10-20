@@ -66,4 +66,5 @@ Component tests are written in app 0 and copied unchanged to apps 1, 2 and 3. Th
 - Commits are GPG-signed locally, but GitHub's rebase merge re-creates them unsigned on `main`. That is a deliberate choice (linear, granular history over Verified badges), so signed commits are not required on `main`.
 - Commit only after I approve the exact message and file list. Stage files by name.
 - Never commit secrets or personal data. The GitHub repo is public.
+- Design decisions are recorded in `docs/adr/`. Read them before changing a decision; record new ones as a new numbered ADR.
 - After each phase: help me write the NOTES.md entry, then ask me 3 interview questions about it.
