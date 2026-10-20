@@ -62,7 +62,8 @@ Component tests are written in app 0 and copied unchanged to apps 1, 2 and 3. Th
 - Tests first for reducers, store and redux-from-scratch; component tests are the same in all four apps.
 - Show every shell command you run, in a "Commands run" section.
 - `main` is protected: no direct pushes. Work on a branch, open a PR, and merge with rebase.
-- Rebase merging puts every commit on `main` as-is, so each commit is small, self-contained and meaningful: one logical change, and the app builds and tests pass at that commit.
+- Rebase merging puts every commit of the PR on `main` separately, so each commit is small, self-contained and meaningful: one logical change, and the app builds and tests pass at that commit.
+- Commits are GPG-signed locally, but GitHub's rebase merge re-creates them unsigned on `main`. That is a deliberate choice (linear, granular history over Verified badges), so signed commits are not required on `main`.
 - Commit only after I approve the exact message and file list. Stage files by name.
 - Never commit secrets or personal data. The GitHub repo is public.
 - After each phase: help me write the NOTES.md entry, then ask me 3 interview questions about it.
