@@ -147,3 +147,8 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Local editor and Claude Code settings
+.idea/
+.claude/settings.local.json
+.mcp.json
