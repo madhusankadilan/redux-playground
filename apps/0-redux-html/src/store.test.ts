@@ -1,12 +1,33 @@
-import { legacy_createStore as createStore } from "redux";
+import { taskAdded } from "./features/tasks/taskActions";
+import { makeStore } from "./store";
 
-// Smoke test: Redux is installed and a store works. Phase 0.2 replaces it with the real reducers.
-test("a store updates its state when an action is dispatched", () => {
-  const counter = (state = 0, action: { type: string }) =>
-    action.type === "incremented" ? state + 1 : state;
-  const store = createStore(counter);
+describe("makeStore", () => {
+  test("starts with an empty task list", () => {
+    expect(makeStore().getState()).toEqual({ tasks: [] });
+  });
 
-  store.dispatch({ type: "incremented" });
+  test("dispatching taskAdded adds the task to the state", () => {
+    const store = makeStore();
+    store.dispatch(taskAdded("Write tests"));
 
-  expect(store.getState()).toBe(1);
+    expect(store.getState().tasks).toEqual([
+      { id: expect.any(String), title: "Write tests", done: false },
+    ]);
+  });
+
+  test("calls subscribers after each dispatch", () => {
+    const store = makeStore();
+    const listener = vi.fn();
+    store.subscribe(listener);
+
+    store.dispatch(taskAdded("Write tests"));
+
+    expect(listener).toHaveBeenCalledOnce();
+  });
+
+  test("returns a fresh store on every call", () => {
+    makeStore().dispatch(taskAdded("Write tests"));
+
+    expect(makeStore().getState().tasks).toEqual([]);
+  });
 });
