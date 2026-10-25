@@ -1,0 +1,160 @@
+/* Design tokens, from the "Design System" board in the Penpot file "Redux Playground" */
+
+:root {
+  /* Colours: light theme */
+  --bg: #f6f7f9;
+  --card: #ffffff;
+  --text: #1f2328;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --accent: #4f46e5;
+  --accent-soft: #eef2ff;
+  --danger: #dc2626;
+  --hover: #f3f4f6;
+  --on-accent: #ffffff;
+
+  /* Typography: Inter, line height 1.4 */
+  --font: "Inter Variable", "Inter", system-ui, sans-serif;
+  --line-height: 1.4;
+
+  /* Spacing: 4px grid */
+  --space-row: 4px;
+  --space-form: 8px;
+  --space-item: 12px;
+  --space-section: 24px;
+  --space-card: 32px;
+
+  /* Radius */
+  --radius-checkbox: 5px;
+  --radius-delete: 6px;
+  --radius-control: 8px;
+  --radius-card: 14px;
+  --radius-pill: 16px;
+
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  /* Colours: dark theme (same names, different values) */
+  --bg: #0d1117;
+  --card: #161b22;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --border: #30363d;
+  --accent: #818cf8;
+  --accent-soft: #262a4a;
+  --danger: #f87171;
+  --hover: #1f242c;
+  --on-accent: #0d1117;
+
+  color-scheme: dark;
+}
+
+/* Base */
+
+body {
+  margin: 0;
+  padding: 0 16px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: var(--line-height);
+}
+
+/* Card */
+
+.card {
+  box-sizing: border-box;
+  max-width: 480px;
+  margin: 64px auto;
+  padding: var(--space-card);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.08);
+}
+
+.card h1 {
+  margin: 0 0 var(--space-section);
+  font-size: 24px;
+  font-weight: 600;
+}
+
+/* Add task form */
+
+.add-task {
+  display: flex;
+  gap: var(--space-form);
+  padding-bottom: var(--space-section);
+  border-bottom: 1px solid var(--border);
+}
+
+.add-task input {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--card);
+  color: var(--text);
+  font: inherit;
+}
+
+.add-task input::placeholder {
+  color: var(--muted);
+}
+
+.add-task input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.add-task button {
+  height: 40px;
+  padding: 0 20px;
+  border: none;
+  border-radius: var(--radius-control);
+  background: var(--accent);
+  color: var(--on-accent);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.add-task button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Task list */
+
+.tasks ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-row);
+  margin: var(--space-section) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tasks li {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: var(--radius-control);
+}
+
+.tasks li:hover {
+  background: var(--hover);
+}
+
+.tasks p {
+  margin: 0;
+  padding: 40px 0 16px;
+  color: var(--muted);
+  text-align: center;
+}
