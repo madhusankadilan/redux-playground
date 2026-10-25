@@ -1,5 +1,6 @@
 import { combineReducers, legacy_createStore as createStore, type StoreEnhancer } from "redux";
 import { tasksReducer } from "./features/tasks/tasksReducer";
+import { themeReducer } from "./features/theme/themeReducer";
 
 declare global {
   interface Window {
@@ -8,7 +9,7 @@ declare global {
   }
 }
 
-const rootReducer = combineReducers({ tasks: tasksReducer });
+const rootReducer = combineReducers({ tasks: tasksReducer, theme: themeReducer });
 
 export type RootState = ReturnType<typeof rootReducer>;
 
