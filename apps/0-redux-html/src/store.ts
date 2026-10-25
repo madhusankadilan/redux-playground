@@ -8,3 +8,5 @@ export type RootState = ReturnType<typeof rootReducer>;
 export function makeStore() {
   return createStore(rootReducer);
 }
+
+export type AppStore = ReturnType<typeof makeStore>;

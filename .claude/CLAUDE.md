@@ -21,7 +21,7 @@ type Filter = "all" | "active" | "done";
 type Theme = "light" | "dark";
 ```
 
-- Add a task: input + "Add task" button, Enter also adds. Title trimmed, blank ignored, input clears after adding
+- Add a task: input + "Add" button, Enter also adds. Title trimmed, blank ignored, input clears after adding
 - Delete a task: "Delete" button per task
 - Toggle done: checkbox per task
 - Filter: All / Active / Done buttons, each with a count

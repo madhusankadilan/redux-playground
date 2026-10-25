@@ -1,5 +1,5 @@
 import "./style.css";
+import { mountApp } from "./app";
+import { makeStore } from "./store";
 
-document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
-<section></section>
-`;
+mountApp(document.querySelector<HTMLDivElement>("#app")!, makeStore());
