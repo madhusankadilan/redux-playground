@@ -26,6 +26,7 @@ type Theme = "light" | "dark";
 - Toggle done: checkbox per task
 - Filter: All / Active / Done buttons, each with a count
 - Theme: a toggle button in the header switches light / dark
+- Persist tasks: saved to localStorage and restored on page load
 - Load tasks (async): fake API (`setTimeout`, ~500 ms) with loading and error states, and a Retry button on error
 
 The UI design is in the Penpot file "Redux Playground": one board per state (Default, Typing, Filter Active, Loading, Error, Empty), in light and dark.

@@ -1,5 +1,6 @@
 import { taskAdded } from "./features/tasks/taskActions";
 import { makeStore } from "./store";
+import type { Task } from "./types";
 
 describe("makeStore", () => {
   test("starts with an empty task list", () => {
@@ -29,5 +30,15 @@ describe("makeStore", () => {
     makeStore().dispatch(taskAdded("Write tests"));
 
     expect(makeStore().getState().tasks).toEqual([]);
+  });
+
+  test("starts with the preloaded tasks", () => {
+    const buyMilk: Task = { id: "1", title: "Buy milk", done: false };
+
+    expect(makeStore({ tasks: [buyMilk] }).getState()).toEqual({ tasks: [buyMilk] });
+  });
+
+  test("starts with an empty task list when the preloaded tasks are undefined", () => {
+    expect(makeStore({ tasks: undefined }).getState()).toEqual({ tasks: [] });
   });
 });

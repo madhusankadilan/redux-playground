@@ -12,8 +12,8 @@ const rootReducer = combineReducers({ tasks: tasksReducer });
 
 export type RootState = ReturnType<typeof rootReducer>;
 
-export function makeStore() {
-  return createStore(rootReducer, undefined, window.__REDUX_DEVTOOLS_EXTENSION__?.());
+export function makeStore(preloadedState?: Partial<RootState>) {
+  return createStore(rootReducer, preloadedState, window.__REDUX_DEVTOOLS_EXTENSION__?.());
 }
 
 export type AppStore = ReturnType<typeof makeStore>;
