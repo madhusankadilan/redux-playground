@@ -1,6 +1,6 @@
 # 2. Persist tasks in localStorage
 
-- **Status:** Accepted
+- **Status:** Accepted, amended by [ADR 0003](0003-persist-the-theme.md)
 - **Date:** 2026-10-25
 
 ## Context
