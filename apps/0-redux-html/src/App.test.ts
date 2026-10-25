@@ -4,6 +4,7 @@ import { renderApp } from "./test/renderApp";
 
 const titleInput = () => screen.getByRole("textbox", { name: "New task" });
 const addButton = () => screen.getByRole("button", { name: "Add" });
+const themeToggle = () => screen.getByRole("button", { name: "Dark theme" });
 
 describe("adding tasks", () => {
   test("shows an empty message when there are no tasks", () => {
@@ -74,5 +75,35 @@ describe("adding tasks", () => {
     expect(items).toHaveLength(2);
     expect(items[0]).toHaveTextContent("Buy milk");
     expect(items[1]).toHaveTextContent("Write tests");
+  });
+});
+
+describe("theme", () => {
+  test("starts with the light theme", () => {
+    renderApp();
+
+    expect(themeToggle()).toHaveAttribute("aria-pressed", "false");
+    expect(document.documentElement).toHaveAttribute("data-theme", "light");
+  });
+
+  test("switches to the dark theme when the toggle is clicked", async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.click(themeToggle());
+
+    expect(themeToggle()).toHaveAttribute("aria-pressed", "true");
+    expect(document.documentElement).toHaveAttribute("data-theme", "dark");
+  });
+
+  test("switches back to the light theme on a second click", async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.click(themeToggle());
+    await user.click(themeToggle());
+
+    expect(themeToggle()).toHaveAttribute("aria-pressed", "false");
+    expect(document.documentElement).toHaveAttribute("data-theme", "light");
   });
 });

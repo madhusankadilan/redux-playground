@@ -10,12 +10,17 @@ import "@testing-library/jest-dom/vitest";
  * - finds several buttons and throws, or
  * - finds a button left over from an earlier test and passes by accident.
  *
- * Apps 1–3 do not need this: `@testing-library/react` registers its own `cleanup()` in a
- * global `afterEach` (one reason `globals: true` is set in `vite.config.ts`). App 0 renders
- * without React, so it has to clean up by itself.
+ * The theme is set as `data-theme` on `<html>`, outside `document.body`, so it is removed
+ * separately. Otherwise a test that switches to dark would leave the next test in dark mode.
+ *
+ * Apps 1–3 get the `document.body` cleanup from `@testing-library/react`, which registers
+ * its own `cleanup()` in a global `afterEach` (one reason `globals: true` is set in
+ * `vite.config.ts`), but they still need to remove `data-theme` themselves. App 0 renders
+ * without React, so it has to clean up both by itself.
  *
  * @see ./renderApp.ts
  */
 afterEach(() => {
   document.body.replaceChildren();
+  document.documentElement.removeAttribute("data-theme");
 });
