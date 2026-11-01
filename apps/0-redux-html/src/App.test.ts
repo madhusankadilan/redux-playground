@@ -6,6 +6,7 @@ const titleInput = () => screen.getByRole("textbox", { name: "New task" });
 const addButton = () => screen.getByRole("button", { name: "Add" });
 const themeToggle = () => screen.getByRole("button", { name: "Dark theme" });
 const checkbox = (title: string) => screen.getByRole("checkbox", { name: title });
+const deleteButton = (title: string) => screen.getByRole("button", { name: `Delete ${title}` });
 
 describe("adding tasks", () => {
   test("shows an empty message when there are no tasks", () => {
@@ -130,6 +131,30 @@ describe("marking tasks done", () => {
 
     expect(checkbox("Buy milk")).not.toBeChecked();
     expect(checkbox("Write tests")).toBeChecked();
+  });
+});
+
+describe("deleting tasks", () => {
+  test("removes the task when its delete button is clicked", async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.type(titleInput(), "Buy milk{Enter}");
+    await user.click(deleteButton("Buy milk"));
+
+    expect(screen.queryByRole("listitem")).not.toBeInTheDocument();
+    expect(screen.getByText("No tasks yet")).toBeInTheDocument();
+  });
+
+  test("removes only the clicked task", async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.type(titleInput(), "Buy milk{Enter}");
+    await user.type(titleInput(), "Write tests{Enter}");
+    await user.click(deleteButton("Buy milk"));
+
+    expect(screen.getByRole("listitem")).toHaveTextContent("Write tests");
   });
 });
 

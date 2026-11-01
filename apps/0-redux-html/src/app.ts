@@ -1,4 +1,4 @@
-import { taskAdded, taskToggled } from "./features/tasks/taskActions";
+import { taskAdded, taskDeleted, taskToggled } from "./features/tasks/taskActions";
 import { themeToggled } from "./features/theme/themeActions";
 import type { AppStore, RootState } from "./store";
 import type { Task } from "./types";
@@ -61,6 +61,12 @@ export function mountApp(container: HTMLElement, store: AppStore) {
     store.dispatch(taskToggled(checkbox.closest("li")!.dataset.id!));
   });
 
+  tasks.addEventListener("click", (event) => {
+    const deleteButton = (event.target as Element).closest(".delete");
+    if (!deleteButton) return;
+    store.dispatch(taskDeleted(deleteButton.closest("li")!.dataset.id!));
+  });
+
   // 4. State → DOM
   function render(state: RootState) {
     document.documentElement.dataset.theme = state.theme;
@@ -89,9 +95,17 @@ function taskItem(task: Task) {
   const label = document.createElement("label");
   label.append(checkbox, title);
 
+  const deleteButton = document.createElement("button");
+  deleteButton.type = "button";
+  deleteButton.className = "delete";
+  deleteButton.setAttribute("aria-label", `Delete ${task.title}`);
+  deleteButton.innerHTML = `
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+  `;
+
   const item = document.createElement("li");
   item.dataset.id = task.id;
-  item.append(label);
+  item.append(label, deleteButton);
   return item;
 }
 
