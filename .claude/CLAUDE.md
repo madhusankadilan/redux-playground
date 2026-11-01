@@ -22,7 +22,7 @@ type Theme = "light" | "dark";
 ```
 
 - Add a task: input + "Add" button, Enter also adds. Title trimmed, blank ignored, input clears after adding
-- Delete a task: "Delete" button per task
+- Delete a task: × button per task, named "Delete <title>" with `aria-label`
 - Toggle done: checkbox per task
 - Filter: All / Active / Done buttons, each with a count
 - Theme: a toggle button in the header switches light / dark
