@@ -7,10 +7,10 @@ Learning repo: the same todo app built four times to learn Redux. Only the state
 npm workspaces (`apps/*`, `packages/*`), Node 24, Vite + TypeScript, Vitest + Testing Library (jsdom).
 
 - `apps/0-redux-html`: Redux with plain HTML + TypeScript, no framework. `store.subscribe` re-renders the DOM by hand
-- `apps/1-redux-core`: React + plain Redux (no RTK): constants, action creators, `switch` reducers, `react-redux`, `redux-thunk`, `reselect`
-- `apps/2-redux-tool-kit`: React + Redux Toolkit: `createSlice`, `configureStore`, typed hooks, `createAsyncThunk`, `createEntityAdapter`
+- `apps/1-redux-core`: React + plain Redux (no RTK): constants, action creators, `switch` reducers, `react-redux`, `reselect`
+- `apps/2-redux-tool-kit`: React + Redux Toolkit: `createSlice`, `configureStore`, typed hooks, `createEntityAdapter`
 - `apps/3-redux-from-scratch`: app 1's code, importing from `packages/redux-from-scratch` instead of `redux` / `react-redux`
-- `packages/redux-from-scratch` (npm name `@playground/redux-from-scratch`): my own `createStore`, `combineReducers`, `applyMiddleware`, thunk, `Provider`, `useSelector`, `useDispatch` (with tests)
+- `packages/redux-from-scratch` (npm name `@playground/redux-from-scratch`): my own `createStore`, `combineReducers`, `applyMiddleware`, `Provider`, `useSelector`, `useDispatch` (with tests)
 - `NOTES.md`: what I learned per phase, plus interview questions
 
 ## The feature (identical in all four apps)
@@ -27,30 +27,28 @@ type Theme = "light" | "dark";
 - Filter: All / Active / Done buttons, each with a count
 - Theme: a toggle button in the header switches light / dark
 - Persist tasks and the theme: saved to localStorage and restored on page load
-- Load tasks (async): fake API (`setTimeout`, ~500 ms) with loading and error states, and a Retry button on error
 
-The UI design is in the Penpot file "Redux Playground": one board per state (Default, Typing, Filter Active, Loading, Error, Empty), in light and dark.
+The UI design is in the Penpot file "Redux Playground": one board per state (Default, Typing, Filter Active, Empty), in light and dark. The Loading and Error boards are not built (ADR 0005).
 
 ## Shared test contract
 
 Component tests are written in app 0 and copied unchanged to apps 1, 2 and 3. They use Testing Library queries (`screen`, `userEvent`), which work with and without React. Every app exposes:
 
 - `src/store.ts` exports `makeStore()`: a fresh store per test, never a shared singleton
-- `src/api.ts` exports `fetchTasks()`: tests replace it with `vi.mock`, so they never wait on real timers and can test the error path
 - `src/test/renderApp.ts(x)` exports `renderApp()`: the only per-app difference. App 0 calls `mountApp(container, makeStore())`; apps 1–3 render `<App />` inside `<Provider store={makeStore()}>`
-- Tests interact through the UI only, never through the state shape (app 1.6 normalises state, app 2 uses an entity adapter)
+- Tests interact through the UI only, never through the state shape (app 1.5 normalises state, app 2 uses an entity adapter)
 
 ## Phases
 
-- App 0 (no framework): 0.1 concepts, 0.2 actions and reducers, 0.3 store, 0.4 rendering the DOM from `subscribe`, 0.5 async (thunk)
-- App 1 follows Redux Fundamentals: 1.1 concepts, 1.2 actions and reducers, 1.3 store, 1.4 React (hooks, then one component with `connect`), 1.5 async (thunk), 1.6 patterns (reselect, normalised state)
-- App 2: 2.1 convert to RTK, 2.2 `createAsyncThunk`, 2.3 `createSelector` + `createEntityAdapter`, 2.4 compare (tests pass unchanged, file mapping + line counts in NOTES.md)
-- App 3: 3.1 `createStore`, 3.2 `combineReducers`, 3.3 `applyMiddleware` + thunk, 3.4 React bindings (`useSyncExternalStore`), 3.5 swap (tests pass unchanged)
+- App 0 (no framework): 0.1 concepts, 0.2 actions and reducers, 0.3 store, 0.4 rendering the DOM from `subscribe`
+- App 1 follows Redux Fundamentals: 1.1 concepts, 1.2 actions and reducers, 1.3 store, 1.4 React (hooks, then one component with `connect`), 1.5 patterns (reselect, normalised state)
+- App 2: 2.1 convert to RTK, 2.2 `createSelector` + `createEntityAdapter`, 2.3 compare (tests pass unchanged, file mapping + line counts in NOTES.md)
+- App 3: 3.1 `createStore`, 3.2 `combineReducers`, 3.3 `applyMiddleware` (tested with a logging middleware), 3.4 React bindings (`useSyncExternalStore`), 3.5 swap (tests pass unchanged)
+- No async loading in any app (ADR 0005)
 
 ## Gotchas
 
 - Plain Redux: `import { legacy_createStore as createStore } from "redux"`
-- redux-thunk v3 has no default export: `import { thunk } from "redux-thunk"`
 - Generate task ids in action creators (`crypto.randomUUID()`), never in reducers: reducers stay pure
 - Short names like `my-redux` are taken on the public npm registry, so the package uses the scoped name `@playground/redux-from-scratch` (app 3 depends on it as `"*"`); `node_modules/@playground/redux-from-scratch` must be a symlink to the workspace
 - `@playground/redux-from-scratch` lists `react` as a peer dependency, so there is only one copy of React

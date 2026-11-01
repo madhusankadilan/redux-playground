@@ -22,5 +22,5 @@ The chosen filter itself could also live outside Redux, in the DOM or a variable
 
 - Counts and the visible list can't get out of sync with the tasks.
 - Selectors are plain functions of the state, tested without a store or DOM.
-- Callers don't read `state.tasks` directly, so when app 1.6 normalises the tasks, only the selectors change.
-- `selectVisibleTasks` and `selectTaskCounts` return a new array or object on each call. That's fine in app 0, where `render` rebuilds the list anyway, but `useSelector` in React re-renders when the result changes identity, so apps 1–2 wrap them with `reselect` / `createSelector` (phases 1.6 and 2.3).
+- Callers don't read `state.tasks` directly, so when app 1.5 normalises the tasks, only the selectors change.
+- `selectVisibleTasks` and `selectTaskCounts` return a new array or object on each call. That's fine in app 0, where `render` rebuilds the list anyway, but `useSelector` in React re-renders when the result changes identity, so apps 1–2 wrap them with `reselect` / `createSelector` (phases 1.5 and 2.2).
