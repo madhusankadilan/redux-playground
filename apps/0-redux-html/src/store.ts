@@ -1,4 +1,5 @@
 import { combineReducers, legacy_createStore as createStore, type StoreEnhancer } from "redux";
+import { filterReducer } from "./features/filter/filterReducer";
 import { tasksReducer } from "./features/tasks/tasksReducer";
 import { themeReducer } from "./features/theme/themeReducer";
 
@@ -9,7 +10,11 @@ declare global {
   }
 }
 
-const rootReducer = combineReducers({ tasks: tasksReducer, theme: themeReducer });
+const rootReducer = combineReducers({
+  tasks: tasksReducer,
+  theme: themeReducer,
+  filter: filterReducer,
+});
 
 export type RootState = ReturnType<typeof rootReducer>;
 

@@ -1,11 +1,12 @@
+import { filterChanged } from "./features/filter/filterActions";
 import { taskAdded } from "./features/tasks/taskActions";
 import { themeToggled } from "./features/theme/themeActions";
 import { makeStore } from "./store";
 import type { Task } from "./types";
 
 describe("makeStore", () => {
-  test("starts with an empty task list and the light theme", () => {
-    expect(makeStore().getState()).toEqual({ tasks: [], theme: "light" });
+  test("starts with an empty task list, the light theme and all tasks shown", () => {
+    expect(makeStore().getState()).toEqual({ tasks: [], theme: "light", filter: "all" });
   });
 
   test("dispatching taskAdded adds the task to the state", () => {
@@ -22,6 +23,13 @@ describe("makeStore", () => {
     store.dispatch(themeToggled());
 
     expect(store.getState().theme).toBe("dark");
+  });
+
+  test("dispatching filterChanged changes the filter", () => {
+    const store = makeStore();
+    store.dispatch(filterChanged("done"));
+
+    expect(store.getState().filter).toBe("done");
   });
 
   test("calls subscribers after each dispatch", () => {
