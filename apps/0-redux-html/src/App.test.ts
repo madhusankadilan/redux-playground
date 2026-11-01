@@ -7,6 +7,8 @@ const addButton = () => screen.getByRole("button", { name: "Add" });
 const themeToggle = () => screen.getByRole("button", { name: "Dark theme" });
 const checkbox = (title: string) => screen.getByRole("checkbox", { name: title });
 const deleteButton = (title: string) => screen.getByRole("button", { name: `Delete ${title}` });
+const filterButton = (label: string) =>
+  screen.getByRole("button", { name: new RegExp(`^${label}`) });
 
 describe("adding tasks", () => {
   test("shows an empty message when there are no tasks", () => {
@@ -155,6 +157,82 @@ describe("deleting tasks", () => {
     await user.click(deleteButton("Buy milk"));
 
     expect(screen.getByRole("listitem")).toHaveTextContent("Write tests");
+  });
+});
+
+describe("filtering tasks", () => {
+  // Buy milk and Write tests are active, Read Redux docs is done (as in the design)
+  async function addExampleTasks(user: ReturnType<typeof userEvent.setup>) {
+    await user.type(titleInput(), "Buy milk{Enter}");
+    await user.type(titleInput(), "Read Redux docs{Enter}");
+    await user.type(titleInput(), "Write tests{Enter}");
+    await user.click(checkbox("Read Redux docs"));
+  }
+
+  test("starts with All selected", () => {
+    renderApp();
+
+    expect(filterButton("All")).toHaveAttribute("aria-pressed", "true");
+    expect(filterButton("Active")).toHaveAttribute("aria-pressed", "false");
+    expect(filterButton("Done")).toHaveAttribute("aria-pressed", "false");
+  });
+
+  test("shows the number of tasks for each filter", async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await addExampleTasks(user);
+
+    expect(filterButton("All")).toHaveAccessibleName("All 3");
+    expect(filterButton("Active")).toHaveAccessibleName("Active 2");
+    expect(filterButton("Done")).toHaveAccessibleName("Done 1");
+  });
+
+  test("Active shows only tasks that are not done", async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await addExampleTasks(user);
+    await user.click(filterButton("Active"));
+
+    const items = screen.getAllByRole("listitem");
+    expect(items).toHaveLength(2);
+    expect(items[0]).toHaveTextContent("Buy milk");
+    expect(items[1]).toHaveTextContent("Write tests");
+    expect(filterButton("Active")).toHaveAttribute("aria-pressed", "true");
+    expect(filterButton("All")).toHaveAttribute("aria-pressed", "false");
+  });
+
+  test("Done shows only done tasks", async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await addExampleTasks(user);
+    await user.click(filterButton("Done"));
+
+    expect(screen.getByRole("listitem")).toHaveTextContent("Read Redux docs");
+  });
+
+  test("All shows every task again", async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await addExampleTasks(user);
+    await user.click(filterButton("Done"));
+    await user.click(filterButton("All"));
+
+    expect(screen.getAllByRole("listitem")).toHaveLength(3);
+  });
+
+  test("says so when no task matches the filter", async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.type(titleInput(), "Buy milk{Enter}");
+    await user.click(filterButton("Done"));
+
+    expect(screen.queryByRole("listitem")).not.toBeInTheDocument();
+    expect(screen.getByText("No done tasks")).toBeInTheDocument();
   });
 });
 

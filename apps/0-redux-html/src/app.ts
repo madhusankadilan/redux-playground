@@ -1,13 +1,16 @@
+import { filterChanged } from "./features/filter/filterActions";
 import { taskAdded, taskDeleted, taskToggled } from "./features/tasks/taskActions";
+import { selectTaskCounts, selectVisibleTasks } from "./features/tasks/taskSelectors";
 import { themeToggled } from "./features/theme/themeActions";
 import type { AppStore, RootState } from "./store";
-import type { Task } from "./types";
+import type { Filter, Task } from "./types";
 
 /**
  * Builds the app inside `container` and keeps it in sync with `store`.
  *
- * The shell (header, form) is built once. Only the parts that depend on state (the theme and
- * the task list) are updated on every store change, so the input keeps its text and focus.
+ * The shell (header, form) is built once. Only the parts that depend on state (the theme, the
+ * filter buttons and the task list) are updated on every store change, so the input keeps its
+ * text and focus.
  */
 export function mountApp(container: HTMLElement, store: AppStore) {
   // 1. The shell: built once, never re-rendered
@@ -29,6 +32,11 @@ export function mountApp(container: HTMLElement, store: AppStore) {
         <input aria-label="New task" placeholder="What needs doing?" autocomplete="off" />
         <button type="submit" disabled>Add</button>
       </form>
+      <div class="filters" role="group" aria-label="Filter tasks">
+        <button type="button" data-filter="all">All <span class="count"></span></button>
+        <button type="button" data-filter="active">Active <span class="count"></span></button>
+        <button type="button" data-filter="done">Done <span class="count"></span></button>
+      </div>
       <div class="tasks"></div>
     </main>
   `;
@@ -36,6 +44,8 @@ export function mountApp(container: HTMLElement, store: AppStore) {
   const form = container.querySelector("form")!;
   const input = form.querySelector("input")!;
   const addButton = form.querySelector("button")!;
+  const filters = container.querySelector<HTMLDivElement>(".filters")!;
+  const filterButtons = filters.querySelectorAll<HTMLButtonElement>("button");
   const tasks = container.querySelector<HTMLDivElement>(".tasks")!;
   const themeToggle = container.querySelector<HTMLButtonElement>(".theme-toggle")!;
 
@@ -53,6 +63,11 @@ export function mountApp(container: HTMLElement, store: AppStore) {
     updateAddButton();
   });
   themeToggle.addEventListener("click", () => store.dispatch(themeToggled()));
+  filters.addEventListener("click", (event) => {
+    const button = (event.target as Element).closest<HTMLButtonElement>("[data-filter]");
+    if (!button) return;
+    store.dispatch(filterChanged(button.dataset.filter as Filter));
+  });
 
   // One listener on the list container (event delegation): rows are rebuilt on every render,
   // but `tasks` is built once, so this listener survives
@@ -71,7 +86,17 @@ export function mountApp(container: HTMLElement, store: AppStore) {
   function render(state: RootState) {
     document.documentElement.dataset.theme = state.theme;
     themeToggle.setAttribute("aria-pressed", String(state.theme === "dark"));
-    tasks.replaceChildren(state.tasks.length === 0 ? emptyMessage() : taskList(state.tasks));
+
+    const counts = selectTaskCounts(state);
+    for (const button of filterButtons) {
+      const filter = button.dataset.filter as Filter;
+      button.setAttribute("aria-pressed", String(filter === state.filter));
+      button.querySelector(".count")!.textContent = String(counts[filter]);
+    }
+
+    const visible = selectVisibleTasks(state);
+    const empty = counts.all === 0 ? "No tasks yet" : `No ${state.filter} tasks`;
+    tasks.replaceChildren(visible.length > 0 ? taskList(visible) : emptyMessage(empty));
   }
 
   store.subscribe(() => render(store.getState()));
@@ -109,8 +134,8 @@ function taskItem(task: Task) {
   return item;
 }
 
-function emptyMessage() {
+function emptyMessage(text: string) {
   const message = document.createElement("p");
-  message.textContent = "No tasks yet";
+  message.textContent = text;
   return message;
 }
