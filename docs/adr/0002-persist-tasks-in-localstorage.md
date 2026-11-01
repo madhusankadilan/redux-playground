@@ -1,6 +1,6 @@
 # 2. Persist tasks in localStorage
 
-- **Status:** Accepted, amended by [ADR 0003](0003-persist-the-theme.md)
+- **Status:** Accepted, amended by [ADR 0003](0003-persist-the-theme.md) and [ADR 0005](0005-drop-async-loading.md)
 - **Date:** 2026-10-25
 
 ## Context
@@ -26,4 +26,4 @@ Persist the `tasks` slice in `localStorage`, around the store rather than inside
 - `makeStore` takes an optional preloaded state, and reducers must accept any action (`UnknownAction`) so that `combineReducers` can type the preloaded state.
 - Apps 1–3 persist tasks the same way, each with its own key.
 - If the saved format changes, bump the key's version (`v2`) and ignore or migrate the old data.
-- Phase 0.5 planned to load tasks from a fake async API. Whether that API stays, and how it relates to `localStorage`, is decided in phase 0.5.
+- Phase 0.5 planned to load tasks from a fake async API. ADR 0005 drops it: tasks stay preloaded from `localStorage`.
