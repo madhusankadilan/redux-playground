@@ -1,5 +1,5 @@
 import type { Task } from "../../types";
-import { taskAdded, taskToggled } from "./taskActions";
+import { taskAdded, taskDeleted, taskToggled } from "./taskActions";
 import { tasksReducer } from "./tasksReducer";
 
 const buyMilk: Task = { id: "1", title: "Buy milk", done: false };
@@ -44,5 +44,26 @@ describe("taskToggled", () => {
     expect(state[0]).toBe(buyMilk); // untouched task: same object
     expect(state[1]).not.toBe(readDocs); // toggled task: new object
     expect(readDocs.done).toBe(true); // the old object is unchanged
+  });
+});
+
+describe("taskDeleted", () => {
+  const writeTests: Task = { id: "2", title: "Write tests", done: false };
+
+  test("removes the task with the given id", () => {
+    expect(tasksReducer([buyMilk, writeTests], taskDeleted("1"))).toEqual([writeTests]);
+  });
+
+  test("keeps the other tasks as the same objects", () => {
+    const state = tasksReducer([buyMilk, writeTests], taskDeleted("1"));
+
+    expect(state[0]).toBe(writeTests);
+  });
+
+  test("does not mutate the old state", () => {
+    const before = [buyMilk, writeTests];
+    tasksReducer(before, taskDeleted("1"));
+
+    expect(before).toEqual([buyMilk, writeTests]);
   });
 });

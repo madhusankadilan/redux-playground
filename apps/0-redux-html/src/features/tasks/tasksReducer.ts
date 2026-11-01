@@ -1,6 +1,6 @@
 import type { UnknownAction } from "redux";
 import type { Task } from "../../types";
-import { TASK_ADDED, TASK_TOGGLED, type TaskAction } from "./taskActions";
+import { TASK_ADDED, TASK_DELETED, TASK_TOGGLED, type TaskAction } from "./taskActions";
 
 const initialState: Task[] = [];
 
@@ -15,6 +15,8 @@ export function tasksReducer(state: Task[] = initialState, action: UnknownAction
       return state.map((task) =>
         task.id === taskAction.payload ? { ...task, done: !task.done } : task,
       );
+    case TASK_DELETED:
+      return state.filter((task) => task.id !== taskAction.payload);
     default:
       return state;
   }
