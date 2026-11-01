@@ -1,4 +1,4 @@
-import { taskAdded } from "./features/tasks/taskActions";
+import { taskAdded, taskToggled } from "./features/tasks/taskActions";
 import { themeToggled } from "./features/theme/themeActions";
 import type { AppStore, RootState } from "./store";
 import type { Task } from "./types";
@@ -54,6 +54,13 @@ export function mountApp(container: HTMLElement, store: AppStore) {
   });
   themeToggle.addEventListener("click", () => store.dispatch(themeToggled()));
 
+  // One listener on the list container (event delegation): rows are rebuilt on every render,
+  // but `tasks` is built once, so this listener survives
+  tasks.addEventListener("change", (event) => {
+    const checkbox = event.target as HTMLInputElement;
+    store.dispatch(taskToggled(checkbox.closest("li")!.dataset.id!));
+  });
+
   // 4. State → DOM
   function render(state: RootState) {
     document.documentElement.dataset.theme = state.theme;
@@ -72,8 +79,19 @@ function taskList(tasks: Task[]) {
 }
 
 function taskItem(task: Task) {
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.checked = task.done;
+
+  const title = document.createElement("span");
+  title.textContent = task.title;
+
+  const label = document.createElement("label");
+  label.append(checkbox, title);
+
   const item = document.createElement("li");
-  item.textContent = task.title;
+  item.dataset.id = task.id;
+  item.append(label);
   return item;
 }
 
