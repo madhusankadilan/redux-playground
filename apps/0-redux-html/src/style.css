@@ -90,6 +90,17 @@ body {
   margin-bottom: var(--space-section);
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-item);
+}
+
+.remaining {
+  color: var(--muted);
+  font-size: 14px;
+}
+
 .theme-toggle {
   display: grid;
   place-items: center;

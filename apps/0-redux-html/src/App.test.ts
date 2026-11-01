@@ -236,6 +236,26 @@ describe("filtering tasks", () => {
   });
 });
 
+describe("tasks left", () => {
+  test("shows 0 left when there are no tasks", () => {
+    renderApp();
+
+    expect(screen.getByText("0 left")).toBeInTheDocument();
+  });
+
+  test("counts the tasks that are not done", async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.type(titleInput(), "Buy milk{Enter}");
+    await user.type(titleInput(), "Write tests{Enter}");
+    expect(screen.getByText("2 left")).toBeInTheDocument();
+
+    await user.click(checkbox("Buy milk"));
+    expect(screen.getByText("1 left")).toBeInTheDocument();
+  });
+});
+
 describe("theme", () => {
   test("starts with the light theme", () => {
     renderApp();
