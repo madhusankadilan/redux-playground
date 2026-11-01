@@ -200,6 +200,27 @@ body {
   background: var(--hover);
 }
 
+.tasks label {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-item);
+  cursor: pointer;
+}
+
+.tasks input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.tasks input:checked + span {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
 .tasks p {
   margin: 0;
   padding: 40px 0 16px;

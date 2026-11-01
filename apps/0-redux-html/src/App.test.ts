@@ -5,6 +5,7 @@ import { renderApp } from "./test/renderApp";
 const titleInput = () => screen.getByRole("textbox", { name: "New task" });
 const addButton = () => screen.getByRole("button", { name: "Add" });
 const themeToggle = () => screen.getByRole("button", { name: "Dark theme" });
+const checkbox = (title: string) => screen.getByRole("checkbox", { name: title });
 
 describe("adding tasks", () => {
   test("shows an empty message when there are no tasks", () => {
@@ -75,6 +76,60 @@ describe("adding tasks", () => {
     expect(items).toHaveLength(2);
     expect(items[0]).toHaveTextContent("Buy milk");
     expect(items[1]).toHaveTextContent("Write tests");
+  });
+});
+
+describe("marking tasks done", () => {
+  test("a new task is not done", async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.type(titleInput(), "Buy milk{Enter}");
+
+    expect(checkbox("Buy milk")).not.toBeChecked();
+  });
+
+  test("clicking the checkbox marks the task done", async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.type(titleInput(), "Buy milk{Enter}");
+    await user.click(checkbox("Buy milk"));
+
+    expect(checkbox("Buy milk")).toBeChecked();
+  });
+
+  test("clicking the checkbox again marks the task not done", async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.type(titleInput(), "Buy milk{Enter}");
+    await user.click(checkbox("Buy milk"));
+    await user.click(checkbox("Buy milk"));
+
+    expect(checkbox("Buy milk")).not.toBeChecked();
+  });
+
+  test("clicking the title also toggles the task", async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.type(titleInput(), "Buy milk{Enter}");
+    await user.click(screen.getByText("Buy milk"));
+
+    expect(checkbox("Buy milk")).toBeChecked();
+  });
+
+  test("marks only the clicked task done", async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.type(titleInput(), "Buy milk{Enter}");
+    await user.type(titleInput(), "Write tests{Enter}");
+    await user.click(checkbox("Write tests"));
+
+    expect(checkbox("Buy milk")).not.toBeChecked();
+    expect(checkbox("Write tests")).toBeChecked();
   });
 });
 
